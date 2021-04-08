@@ -58,7 +58,33 @@ router.put('/:id', mw.validateUserId, mw.validateUser, (req, res) => {
   // [x] RETURN THE FRESHLY UPDATED USER OBJECT
   // [x] this needs a middleware to verify user id
   // [x] and another middleware to check that the request body is valid
+  const {id} = req.params
+  const changes = req.body
 
+    User.getById(id)
+    .then(userFound=>{
+      if(!userFound){
+        res.status(404).json({message: "the user you are trying to update was not found"})
+      }
+      else{
+        return User.update(id,changes)
+      }
+    })
+    .then(data=>{
+      if (data){
+        return User.getById(id)
+      }
+    })
+    .then(users=>{
+      if(users){
+        res.status(200).json(users)
+      }else{
+        res.status(404).json({message: "Cannot find the user"})
+      }
+    })
+    .catch(()=>{
+      res.status(500).json({message: "Error getting the users."})
+    })
 
 });
 ////////////////////////////////////////////////////////////////////////////////////
