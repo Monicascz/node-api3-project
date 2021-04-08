@@ -90,23 +90,42 @@ router.put('/:id', mw.validateUserId, mw.validateUser, (req, res) => {
 
 
 ////////////////////////////////////////////////////////////////////////////////////
-router.delete('/:id', mw.validateUserId, (req, res) => {
+router.delete('/:id', mw.validateUserId, async (req, res) => {
   // RETURN THE FRESHLY DELETED USER OBJECT
   // [x]this needs a middleware to verify user id
   const {id} = req.params
-  User.remove(id)
-  .then(()=>{
-    res.status(200).json({message: "The user has been deleted."})
-  })
-  .catch(err=>{
+
+  try{
+    const user = await User.getById(id)
+    if(!user){
+      res.status(404).json({message: "This user does not exist."})
+    }else{
+      const numOfDeletedPosts = await User.remove(id)
+      res.json(user)
+    }
+  }catch{
     res.status(500).json({message: "Error getting the users."})
-  })
+  }
 });
+
+
 ////////////////////////////////////////////////////////////////////////////////////
 router.get('/:id/posts', mw.validateUserId, (req, res) => {
   // RETURN THE ARRAY OF USER POSTS
   // [x] this needs a middleware to verify user id
+  const userId = req.params.id
+  User.getUserPosts(userId)
+  .then(posts=>{
+    res.status(200).json(posts);
+  })
+  .catch(()=>{
+    res.status(500).json({message: "Error getting the users."})
+  })
+
 });
+
+
+
 ////////////////////////////////////////////////////////////////////////////////////
 router.post('/:id/posts', mw.validateUserId, mw.validateUser, (req, res) => {
   // RETURN THE NEWLY CREATED USER POST
