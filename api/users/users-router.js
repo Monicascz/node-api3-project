@@ -16,7 +16,7 @@ router.get('/',  (req, res) => {
   .then(users=>{
     res.status(200).json(users)
   })
-  .catch(err=>{
+  .catch(()=>{
     res.status(500).json({message: "Error getting the users."})
   })
 
@@ -100,7 +100,7 @@ router.delete('/:id', mw.validateUserId, async (req, res) => {
     if(!user){
       res.status(404).json({message: "This user does not exist."})
     }else{
-      const numOfDeletedPosts = await User.remove(id)
+      await User.remove(id)
       res.json(user)
     }
   }catch{
@@ -127,13 +127,12 @@ router.get('/:id/posts', mw.validateUserId, (req, res) => {
 
 
 ////////////////////////////////////////////////////////////////////////////////////
-router.post('/:id/posts', mw.validateUserId, mw.validatePost, async (req, res, next) => {
+router.post('/:id/posts', mw.validateUserId, mw.validatePost, async (req, res) => {
   // RETURN THE NEWLY CREATED USER POST
   // [x]this needs a middleware to verify user id
   // [x]and another middleware to check that the request body is valid
   // const postInfo = {...req.body, user_id: req.params.id}
 const userId = req.params.id
-const post = req.body
 try{
   const result = await Post.insert({
     user_id: userId,
