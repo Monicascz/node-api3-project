@@ -1,6 +1,6 @@
 // require your server and launch it
+require("dotenv").config()
 const server = require('./api/server.js')
-const env = require("dotenv").config()
 // const express = require("express")
 // const app = express()
 const port = process.env.PORT || 9000
