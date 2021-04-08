@@ -5,9 +5,9 @@ const env = require("dotenv").config()
 // const app = express()
 const port = process.env.PORT || 9000
 
-server.use("/api/", (_,res)=>{
-    res.json({data: "API is connected! :) "})
-})
+// app.use("/api/", (_,res)=>{
+//     res.json({data: "API is connected! :) "})
+// })
 
 server.listen(port, ()=>{
     console.log(`Listening on port ${port}`)
