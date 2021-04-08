@@ -87,10 +87,20 @@ router.put('/:id', mw.validateUserId, mw.validateUser, (req, res) => {
     })
 
 });
+
+
 ////////////////////////////////////////////////////////////////////////////////////
 router.delete('/:id', mw.validateUserId, (req, res) => {
   // RETURN THE FRESHLY DELETED USER OBJECT
   // [x]this needs a middleware to verify user id
+  const {id} = req.params
+  User.remove(id)
+  .then(()=>{
+    res.status(200).json({message: "The user has been deleted."})
+  })
+  .catch(err=>{
+    res.status(500).json({message: "Error getting the users."})
+  })
 });
 ////////////////////////////////////////////////////////////////////////////////////
 router.get('/:id/posts', mw.validateUserId, (req, res) => {
