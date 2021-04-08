@@ -48,7 +48,7 @@ router.post('/', mw.validateUser, (req, res) => {
     res.status(201).json(users)
   })
   .catch(()=>{
-    res.status(500).json({message: "Error getting the users."})
+    res.status(500).json({message: "Error adding the user."})
   })
 
 
@@ -83,7 +83,7 @@ router.put('/:id', mw.validateUserId, mw.validateUser, (req, res) => {
       }
     })
     .catch(()=>{
-      res.status(500).json({message: "Error getting the users."})
+      res.status(500).json({message: "Error editing the user."})
     })
 
 });
@@ -104,7 +104,7 @@ router.delete('/:id', mw.validateUserId, async (req, res) => {
       res.json(user)
     }
   }catch{
-    res.status(500).json({message: "Error getting the users."})
+    res.status(500).json({message: "Error removing the users."})
   }
 });
 
@@ -119,7 +119,7 @@ router.get('/:id/posts', mw.validateUserId, (req, res) => {
     res.status(200).json(posts);
   })
   .catch(()=>{
-    res.status(500).json({message: "Error getting the users."})
+    res.status(500).json({message: "Error getting the posts."})
   })
 
 });
@@ -127,10 +127,48 @@ router.get('/:id/posts', mw.validateUserId, (req, res) => {
 
 
 ////////////////////////////////////////////////////////////////////////////////////
-router.post('/:id/posts', mw.validateUserId, mw.validateUser, (req, res) => {
+router.post('/:id/posts', mw.validateUserId, mw.validatePost, async (req, res, next) => {
   // RETURN THE NEWLY CREATED USER POST
   // [x]this needs a middleware to verify user id
   // [x]and another middleware to check that the request body is valid
+  // const postInfo = {...req.body, user_id: req.params.id}
+const userId = req.params.id
+const post = req.body
+try{
+  const result = await Post.insert({
+    user_id: userId,
+    text: req.body.text,
+  })
+  res.status(201).json(result)
+}
+catch(err){
+  res.status(500).json({message: "Error adding a post."})
+}
+
+
+  //MONICA'S ATTEMPT
+  // const userId = req.params.id
+  // const post = req.body
+  // User.getById(userId)
+  // .then(user=>{
+  //   if(!user){
+  //     res.status(404).json({message: "user not found."})
+  //   }else{
+  //     return Post.get()
+  //   }
+  // })
+  // .then(getPostsData=>{
+  //   if(!getPostsData){
+  //     res.status(404).json({message: "the post"})
+  //   }
+  // })
+  // Post.insert(post)
+  //  .then(posts=>{
+  //   res.status(210).json(posts)
+  // })
+  // .catch(()=>{
+  //   res.status(500).json({message: "Error getting the posts."})
+  // })
 });
 
 // do not forget to export the router
