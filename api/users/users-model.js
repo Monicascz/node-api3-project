@@ -18,6 +18,8 @@ function getById(id) {
     .where({ id })
     .first();
 }
+//all that is happening above is it is saying select whatever is inside of Users where the ids match. 
+
 
 function getUserPosts(userId) {
   return db('posts as p')
